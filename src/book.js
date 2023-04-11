@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
-// import "./styles.scss";
 import './styles.css'
+import music from "./music.mp3"
+import { content } from "./content";
+import useSound from "use-sound";
+import { useAudioPlayer } from "react-use-audio-player"
 
 const PageCover = React.forwardRef((props, ref) => {
   return (
@@ -10,64 +13,70 @@ const PageCover = React.forwardRef((props, ref) => {
       ref={ref}
       data-density="hard"
     >
-      <div className="page-content">
-        <h2>{props.children}</h2>
+      <div className="page-content ">
+        <h2 className="page-text-cover">{props.children}</h2>
       </div>
     </div>
   );
 });
 
-const Page = React.forwardRef((props, ref) => {
+export const Page = React.forwardRef((props, ref) => {
   return (
-    <div className="page" ref={ref} style={{padding: "10px"}}>
+    <div className="page" ref={ref} style={{ padding: "10px" }}>
       <div className="page-content">
-        <h2 className="page-header">Page header - {Number(props.number + 1)}</h2>
+        <h2 className="page-header">{props.title}</h2>
         <div
           className="page-image"
           style={{ backgroundImage: "url(images/html/" + props.image + ")" }}
         ></div>
-        <div className="page-text">{props.children}</div>
+        <div className="page-text ">{props.children}</div>
         <div className="page-footer">{props.number + 1}</div>
       </div>
     </div>
   );
 });
+const Player = () => {
+  const [play, { pause, duration, sound }] = useSound(music);
 
+  useEffect(() => {
+    play()
+  }, [play])
+  return (
+    <div>
+      {/* <iframe src={music} allow="autoplay" id="audio"></iframe> */}
+      {/* <audio src={music} autoPlay={true} controls id="myAudio" /> */}
+      {/* <p id="demo"></p> */}
+    </div>
+  )
+}
 export default class Passport extends React.Component {
   constructor(props) {
     super(props);
 
     const pages = [
       <PageCover key={0} pos="top">
-        
+
       </PageCover>
     ];
-
-    let pageNum = 0;
-    for (let i = 0; i < 10; i++) {
-      pageNum++;
-      if (pageNum > 8) pageNum = 1;
+    // pages.push(<Page1 />)
+    for (let i = 0; i < content.length; i++) {
       pages.push(
-        <Page key={i + 1} image={pageNum + ".jpg"} number={i}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus
-          mollis nibh, non convallis ex convallis eu. Suspendisse potenti.
-          Aenean vitae pellentesque erat. Integer non tristique quam.
-          Suspendisse rutrum, augue ac sollicitudin mollis, eros velit viverra
-          metus, a venenatis tellus tellus id magna. Aliquam ac nulla rhoncus,
-          accumsan eros sed, viverra enim. Pellentesque non justo vel nibh
-          sollicitudin pharetra suscipit ut ipsum. Lorem ipsum dolor sit amet,
-          consectetur adipiscing elit. In cursus mollis nibh, non convallis ex
-          convallis eu. Suspendisse potenti. Aenean vitae pellentesque erat.
+        <Page key={i + 1} image={i + ".jpg"} number={i} title={content[i].title}>
+          {content[i].content}
         </Page>
       );
     }
 
     pages.push(
       <PageCover key={101} pos="bottom">
-        THE END
+
       </PageCover>
     );
-
+    pages.push(
+      <PageCover key={101} pos="bottom-2">
+        Together &#10084; Forever
+      </PageCover>
+    );
     this.state = {
       page: 0,
       totalPage: 0,
@@ -111,11 +120,11 @@ export default class Passport extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="container-md" style={{ position: "relative" , margin: "auto", border: "1px solid gray"}}>
+      <>
+        <div className="container-md" style={{ position: "relative", margin: "auto", border: "1px solid gray", marginTop: "150px" }}>
           <HTMLFlipBook
             width={550}
-            height={733}
+            height={900}
             size="stretch"
             minWidth={115}
             maxWidth={2000}
@@ -134,34 +143,8 @@ export default class Passport extends React.Component {
             {this.state.pages}
           </HTMLFlipBook>
         </div>
-
-        {/* <div className="container mt-3">
-          <div className="row">
-            <div className="col-md-6">
-              <button
-                type="button"
-                className="btn btn-info btn-sm btn-prev"
-                onClick={this.prevButtonClick}
-              >
-                Previous page
-              </button>
-              [<span>{this.state.page + 1}</span> of{" "}
-              <span>{this.state.totalPage}</span>]
-              <button
-                type="button"
-                className="btn btn-info btn-sm btn-next"
-                onClick={this.nextButtonClick}
-              >
-                Next page
-              </button>
-            </div>
-            <div className="col-md-6">
-              State: <i>{this.state.state}</i>, orientation:{" "}
-              <i>{this.state.orientation}</i>
-            </div>
-          </div>
-        </div> */}
-      </div>
+        <Player />
+      </>
     );
   }
 }

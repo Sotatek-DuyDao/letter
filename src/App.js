@@ -1,6 +1,7 @@
 import DemoBlock from './book'
-export default function App() {
+const App = () => {
   return (
-    <DemoBlock / >
+    <DemoBlock />
   );
 }
+export default App

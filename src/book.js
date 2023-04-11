@@ -4,7 +4,6 @@ import './styles.css'
 import music from "./music.mp3"
 import { content } from "./content";
 import useSound from "use-sound";
-import { useAudioPlayer } from "react-use-audio-player"
 
 const PageCover = React.forwardRef((props, ref) => {
   return (
